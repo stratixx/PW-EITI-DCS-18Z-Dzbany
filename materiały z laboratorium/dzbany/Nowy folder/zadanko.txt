@@ -1,0 +1,6 @@
+generator sygnalu - w poczatkowym stanie generator produkuje sygnal staly ró wartosci ustawionej przez uzytkownika
+wcisniecie przycisku powoduje przejscie w stan generacji sygnalu prostokatnego o wypelnieniu 50% (5 krokow na 10)
+drugie wcisniecie przycisku 1 powoduje generacje sygnalu 7/10 70%. 
+jezeli jednak drugie wcisniecie nastapilo w ciagu 10 sekund od pierwszego to generator przechodzi w stan poczatkowy (czyli 0)
+wcisniecie przycisku 2 powoduje przejscie w stan poczatkowy
+
