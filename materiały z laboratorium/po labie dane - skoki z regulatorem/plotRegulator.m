@@ -1,13 +1,15 @@
-function [  ] = plotDCS( name, startk, heater, fan, temp   )
+function [  ] = plotRegulator( name, startk, heater, fan, temp, temp_zad   )
 
 %wyznaczenie chwil skoku wartoœci sterowania i zak³ócenia
 heaterStepK = find(abs(heater(2:end)-heater(1:end-1))'>25);
 fanStepK = find(abs(fan(2:end)-fan(1:end-1))'>25);
-disp(['fig ' name ': heater steps in:{' num2str(heaterStepK) '} fan steps in:{' num2str(fanStepK) '}']);
+temp_zadStepK = find(abs(temp_zad(2:end)-temp_zad(1:end-1))'>0.5);
+disp(['fig ' name ': heater steps in:{' num2str(heaterStepK) '} fan steps in:{' num2str(fanStepK) '} temp_zad steps in:{' num2str(temp_zadStepK) '}']);
 
 fan = fan(startk:end);
 temp = temp(startk:end);
 heater = heater(startk:end);
+temp_zad = temp_zad(startk:end);
 
 plotEnd=length(fan)-mod(length(fan),100);
 
@@ -18,7 +20,8 @@ subplot(2,1,1)
 hold on
 grid on
 stairs(temp(1:plotEnd),'b')
-legend('TEMP', 'Location', 'East');
+stairs(temp_zad(1:plotEnd),'r')
+legend('TEMP', 'TEMP_z_a_d', 'Location', 'West');
 axis([0 plotEnd min(temp) max(temp)]);
 ylabel('Temperatura [*C]')
 title('Temperatura obiektu')
