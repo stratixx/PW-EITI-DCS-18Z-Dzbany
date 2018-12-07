@@ -25,7 +25,7 @@
 
 
 \SendSettingsToPgf
-\title{\bf Projekt układu regulacji obiektu grzejąco-chłodzącego xd\vskip 0.1cm}
+\title{\bf Projekt układu regulacji obiektu grzejąco-chłodzącego\vskip 0.1cm}
 \author{Krystian Guliński \and Jakub Sikora \and Konrad Winnicki}
 \date{\today}
 \pgfplotsset{compat=1.15}	
@@ -75,12 +75,35 @@
 
 \section{Opis obiektu termicznego}
 \label{ObiektTermiczny}
+Obiektem regulacji jest laboratoryjne stanowisko chłodząco-grzejące. Jest to obiekt cieplny, 
+w którym jako elementy grzewcze wykorzystano rezystory mocy, w specjalnych obudowach dobrze odprowadzających
+wytworzone ciepło. Do chłodzenia wykorzystano wysokoobrotowe
+wentylatory. Zastosowano czujniki temperatury z magistralą danych
+OneWire – oznaczenia. Dodatkowo wykorzystano płytę pomiarową
+służącą do odczytu wartości prądu oraz napięcia. Urządzenie może pracować w trzech trybach komunikacji: poprzez
+dedykowany protokół komunikacyjny przy użyciu standardu USB,
+protokół MODBUS RTU oraz standard napięciowy RS485 lub poprzez
+standard sygnałów analogowych 0-10V podłączając regulator przy użyciu złączy
+śrubowych. Użytkownik ponadto ma możliwość zmiany charakteru obiektu, w tym celu
+zamontowana została fizyczna przegroda. Wykorzystana jest ona do oddzielenia dwóch
+strumieni powietrza wentylatora lewego i prawego, dzięki czemu można zredukować
+zakłócenia wynikające z mieszania się strumieni. W ćwiczeniu, obiekt laboratoryjny
+został znacząco uproszczony do przypadku jednowymiarowego. Wartością regulowaną była
+wartość temperatury odczytana na czujniku temperatury T1. Sterowanie temperaturą odbywało się 
+za pomocą grzałki G1. W ramach utrudnienia, na obiekt działało zakłócenie w postaci wentylatora W1.
+
 
 \section{Proces modelowania obiektu}
 \label{ModelowanieObiektu}
+Przy pomocy zebranej odpowiedzi skokowej obiektu, za pomocą Matlaba dokonaliśmy identyfikacji 
+modelu jednoinercyjnego. Pomimo że obiekt fizycznie jest co najmniej dwuinercyjny, zdecydowaliśmy się na 
+przybliżenie go pojedynczą inercją w celu uproszczenia struktury regulacji. \\
+\indent Do przeprowadzania identyfikacji wykorzystaliśmy funkcję \texttt{tfest}, która na podstawie 
+przebiegów czasowych wyznacza parametry zadanej transmitancji. 
 
 \section{Proces modelowania zakłóceń}
 \label{ModelowanieZaklocen}
+Analogicznie, wyznaczyliśmy model zakłóceń....
 
 \section{Zebranie odpowiedzi skokowej}
 \label{OdpowiedzSkokowa}
