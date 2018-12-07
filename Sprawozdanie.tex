@@ -112,7 +112,9 @@ przebiegów czasowych wyznacza parametry zadanej transmitancji.
 
 \section{Proces modelowania zakłóceń}
 \label{ModelowanieZaklocen}
-Analogicznie, wyznaczyliśmy model zakłóceń....
+Analogicznie, wyznaczyliśmy model zakłóceń. Przeprowadziliśmy eksperyment polegający na skokowej zmianie 
+poziomu zakłóceń poprzez zmianę wysterowania wentylatora. Tak zebraną odpowiedź skokową zakłóceń, wykorzystaliśmy
+do wyznaczenia transmitancji zakłóceń, którą otrzymaliśmy w ten sam sposób co model obiektu.
 
 \[model\_zakłóceń(s) = \frac{-0.0003625}{s + 0.01105}\]
 
@@ -124,29 +126,38 @@ Analogicznie, wyznaczyliśmy model zakłóceń....
 
 \section{Zebranie odpowiedzi skokowej}
 \label{OdpowiedzSkokowa}
+Eksperyment pobudzenia skokową zmianą sterowania przeprowadziliśmy kilkukrotnie tak aby uzyskać jak najlepsze rezultaty. Ważne aby przed 
+każdą próbą, obiekt znajdował się w stanie ustalonym. Aby zróżnicować dane, eksperyment przeprowadzaliśmy na kilka sposobów, stosując różne 
+kierunki (skok w górę lub w dół) i wysokości skoku.
 
 \chapter{Układ regulacji}
 \label{UkladRegulacji}
 
+
 \section{Opis struktury regulacji}
 \label{OpisStruktury}
+
+Do regulacji obiektem wykorzystaliśmy podstawowy algorytm regulacji PID. Dodatkowo, dzięki pomiarowi zakłóceń zaimplementowaliśmy
+człon odsprzęgający, którego wyjście jest sumowane z wyjściem regulatora PID.
 
 \subsection{Algorytm PID}
 \label{PID}
 
-todo: e eee nie bd pisał teori do tego
+Implementacja algorytmu PIDF z rzeczywistą realizacją członu różniczkującego wygląda w następujący sposób.
 
-todo: ogarnąć ten tekst bo pisze na brudno
+$$PIDF(s) = K _ { p } + \frac { K _ { i } } { s } + \frac { K _ { d } s } { T _ { f } s + 1 }$$
 
-pid został dobrany Matlabowym PID tunerem na podstawie wyznaczonego modelu obiektu
+Nastawy algorytmu PID zostały dobrane za pomocą Matlabowego toolkit PID Tuner na podstawie wyznaczonego modelu obiektu.
 
-taki jest w matlabie 
 
-$PIDF(s) = K _ { p } + \frac { K _ { i } } { s } + \frac { K _ { d } s } { T _ { f } s + 1 }$
 
-$PID\_OVATION(s) = K _ { p } + \frac { 1 } {  T _ { i } s } + \frac { K _ { d } s } { T _ { f } s + 1 }$
 
-więc aby przystosować algorytm pidf do ovation należy obliczyć Ti według wzoru Ti = 1/Ki
+$$PID\_OVATION(s) = K _ { p } + \frac { 1 } {  T _ { i } s } + \frac { K _ { d } s } { T _ { f } s + 1 }$$
+
+Implentacja algorytmu PID w systemie OVATION różni się od implementacji z Matlaba, dlatego też należało odpowiednio dopasować
+parametry.
+
+Aby przystosować algorytm PIDF do OVATION należy obliczyć Ti według wzoru Ti = 1/Ki.
 
 otrzymane parametry:
 
@@ -158,6 +169,12 @@ otrzymane parametry:
 
 \subsection{Człon odsprzęgający}
 \label{Odsprzeganie}
+
+Człon odsprzęgający pozwala na zminimalizowanie wpływu znanych zakłóceń. Aby wyznaczyć transmitancję odsprzęgania należy 
+wyznaczyć transmitancję obiektu i transmitancję zakłóceń. Parametry transmitancji zakłóceń należy  wyznaczyć ze wzoru:
+
+$$T(s) = - \frac{T_z}{T_o}$$
+
 
 \chapter{Implentacja w systemie OVATION}
 \label{OVATION}
