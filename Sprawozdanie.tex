@@ -102,6 +102,8 @@ przybliżenie go pojedynczą inercją w celu uproszczenia struktury regulacji. \
 \indent Do przeprowadzania identyfikacji wykorzystaliśmy funkcję \texttt{tfest}, która na podstawie 
 przebiegów czasowych wyznacza parametry zadanej transmitancji. 
 
+Otrzymany model obiektu:
+
 \[model\_obiektu(s) = \frac{0.00395}{s + 0.008166}\]
 
 \begin{figure}[H]
@@ -112,9 +114,11 @@ przebiegów czasowych wyznacza parametry zadanej transmitancji.
 
 \section{Proces modelowania zakłóceń}
 \label{ModelowanieZaklocen}
-Analogicznie, wyznaczyliśmy model zakłóceń....
+Przy pomocy zebranej odpowiedzi skokowej obiektu w trakcie reakcji na zmianę zakłóceń byliśmy w stanie w analogiczny sposób wyznaczyć również model zakłóceń, który potem będzie przydatny przy odsprzęganiu zakłóceń.
 
-\[model\_zakłóceń(s) = \frac{-0.0003625}{s + 0.01105}\]
+Otrzymany model zakłóceń:
+
+\[model\_zaklocen(s) = \frac{-0.0003625}{s + 0.01105}\]
 
 \begin{figure}[H]
 \centering
@@ -134,25 +138,29 @@ Analogicznie, wyznaczyliśmy model zakłóceń....
 \subsection{Algorytm PID}
 \label{PID}
 
-todo: e eee nie bd pisał teori do tego
+Parametry regulatora PID zostały dobrane na podstawie modelu wyznaczonego w poprzedniej części projektu. W tym celu został użyty PID Tuner dostępny w środowisku MATLAB.
 
-todo: ogarnąć ten tekst bo pisze na brudno
+Równanie regulatora PIDF dostępnego w środowisku MATLAB:
 
-pid został dobrany Matlabowym PID tunerem na podstawie wyznaczonego modelu obiektu
-
-taki jest w matlabie 
 
 $PIDF(s) = K _ { p } + \frac { K _ { i } } { s } + \frac { K _ { d } s } { T _ { f } s + 1 }$
 
-taki jest w ovation
+
+Równanie regulatora PID dostępnego w systemie Ovation:
 
 $PID\_OVATION(s) = K _ { p } + \frac { 1 } {  T _ { i } s } + \frac { K _ { d } s } { T _ { f } s + 1 }$
 
-więc aby przystosować algorytm pidf do ovation należy obliczyć Ti według wzoru Ti = 1/Ki
+Jak widać różnica jest znikoma, aby dostosować parametry otrzymane z PID Tuner należy obliczyć wartość parametru Ti według wzoru
 
-otrzymane parametry:
+$T_{i} = \frac{1}{K_{i}}$
 
-TODO JEZU SIKOR ZNOWU MI TA TABELKA SIĘ NA SAM DÓŁ WRZUCA WTF
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{materialy/krystian_plots/pid_tuner.png}
+\caption{Widok procesu strojenia regulatora PID w PID Tunerze}
+\end{figure}
+
+Otrzymane parametry:
 
 \begin{table}[]
 \begin{tabular}{l|cccl}
