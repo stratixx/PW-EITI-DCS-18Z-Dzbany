@@ -24,6 +24,7 @@
 \usepackage{listings}
 
 
+
 \SendSettingsToPgf
 \title{\bf Projekt układu regulacji obiektu grzejąco-chłodzącego\vskip 0.1cm}
 \author{Krystian Guliński \and Jakub Sikora \and Konrad Winnicki}
@@ -100,6 +101,12 @@ modelu jednoinercyjnego. Pomimo że obiekt fizycznie jest co najmniej dwuinercyj
 przybliżenie go pojedynczą inercją w celu uproszczenia struktury regulacji. \\
 \indent Do przeprowadzania identyfikacji wykorzystaliśmy funkcję \texttt{tfest}, która na podstawie 
 przebiegów czasowych wyznacza parametry zadanej transmitancji. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1.0]{materialy/krystian_plots/wykresik_model_obiekt.pdf}
+\caption{Eksperyment ZN: Kp = 20, step = 500}
+\end{figure}
 
 \section{Proces modelowania zakłóceń}
 \label{ModelowanieZaklocen}
