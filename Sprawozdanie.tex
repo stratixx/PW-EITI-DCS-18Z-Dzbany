@@ -144,13 +144,23 @@ taki jest w matlabie
 
 $PIDF(s) = K _ { p } + \frac { K _ { i } } { s } + \frac { K _ { d } s } { T _ { f } s + 1 }$
 
+taki jest w ovation
+
 $PID\_OVATION(s) = K _ { p } + \frac { 1 } {  T _ { i } s } + \frac { K _ { d } s } { T _ { f } s + 1 }$
 
 więc aby przystosować algorytm pidf do ovation należy obliczyć Ti według wzoru Ti = 1/Ki
 
 otrzymane parametry:
 
+TODO JEZU SIKOR ZNOWU MI TA TABELKA SIĘ NA SAM DÓŁ WRZUCA WTF
 
+\begin{table}[]
+\begin{tabular}{l|cccl}
+Regulator    & Kp     & Ki/Ti        & Td     & Tf      \\ \hline
+PIDF\_MATLAB & 3.2078 & Ki = 0.0502  & 6.3794 & 0.54035 \\
+PID\_OVATION & 3.2079 & Ti = 19.8977 & 6.3794 & 0.54035
+\end{tabular}
+\end{table}
 
 
 
@@ -159,8 +169,12 @@ otrzymane parametry:
 \subsection{Człon odsprzęgający}
 \label{Odsprzeganie}
 
+todo: trzeba wrzucić screena z ovation i opisać jak ten element ovationowy wpisane parametry zostały na podstawie tego modelu zakłóceń
+
 \chapter{Implentacja w systemie OVATION}
 \label{OVATION}
+
+todo: Krystian: ja bym to wyrzucił ogólnie
 
 \section{Control sheet}
 \label{ControlSheet}
