@@ -30,7 +30,6 @@ plot(x,s)
 plot(temperature)
 plot(heater)
 legend("model output", "normalised object output", "normalised input");
-title("Porownanie wyjscia modelu z obiektem");
 grid minor
 xlabel("time [s]")
 hold off
