@@ -31,7 +31,7 @@ hold on
 plot(x+41,s)
 plot(temperature./10)
 plot(fan./1000)
-legend("model output(temperature)", "object output(temperature)", "0.01 * input(fan)");
+legend("model output(temperature)", "normalised object output(temperature)", "0.01 * normalised input(fan)");
 grid minor
 xlabel("time [s]")
 hold off
