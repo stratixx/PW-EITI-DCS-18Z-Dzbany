@@ -29,7 +29,7 @@ s = s(1:endyboy(1)-1);
 plot(x,s)
 plot(temperature)
 plot(heater)
-legend("model output", "normalised object output", "normalised input");
+legend("model output(temperature)", "normalised object output(temperature)", "normalised input(heater)");
 grid minor
 xlabel("time [s]")
 hold off

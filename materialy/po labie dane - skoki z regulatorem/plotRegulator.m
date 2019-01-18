@@ -31,7 +31,7 @@ hold on
 grid on
 xlabel('czas(s)');
 ylabel('Wysterowanie')
-title('Sterowanie i zak³ócenie obiektu')
+title('Sterowanie i zaklocenie obiektu')
 stairs(fan(1:plotEnd),'m')
 stairs(heater(1:plotEnd),'b')
 legend('FAN','HEATER', 'Location', 'East');
@@ -40,9 +40,10 @@ axis([0 plotEnd min(min([fan, heater])) max(max([fan heater]))]);
 
 drawnow()
 hold off
+
 fig_pos = f.PaperPosition;
-%f.PaperSize = [fig_pos(3) fig_pos(4)];
-print(f, strcat(['./svg/',strcat(name,'_')],'.pdf'),'-dpdf')
+f.PaperSize = [fig_pos(3) fig_pos(4)];
+print(f, name,'-dpdf','-bestfit')
 close(f)
 
 end
