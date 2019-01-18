@@ -1,0 +1,146 @@
+\documentclass{mwrep}
+
+% Polskie znaki
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{indentfirst}
+
+% Strona tytułowa
+\usepackage{pgfplots}
+\usepackage{siunitx}
+\usepackage{paracol}
+
+% Pływające obrazki
+\usepackage{float}
+\usepackage{svg}
+\usepackage{graphicx}
+
+% table of contents refs
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{booktabs}
+\usepackage{listings}
+
+
+\SendSettingsToPgf
+\title{\bf Projekt układu sterowania stanowiska INTECO TCRANE \vskip 0.1cm}
+\author{Krystian Guliński \\ Jakub Sikora \\ Konrad Winnicki }
+\date{\today}
+\pgfplotsset{compat=1.15}	
+\begin{document}
+
+\makeatletter
+\renewcommand{\maketitle}{\begin{titlepage}
+		\begin{center}{
+				\LARGE {\bf Politechnika Warszawska}}\\
+            \vspace{0.4cm}
+            \leftskip-0.9cm
+            {\LARGE {\bf \mbox{Wydział Elektroniki i Technik Informacyjnych}}}\\
+            \vspace{0.2cm}
+            {\LARGE {\bf \mbox{Instytut Automatyki i Informatyki Stosowanej}}}\\
+            
+            \vspace{5cm}
+            \leftskip-1.5cm
+			{\bf \Huge \mbox{Systemy automatyki DCS i SCADA} \vskip 0.1cm}
+		\end{center}
+		\vspace{0.1cm}
+
+		\begin{center}
+			{\bf \LARGE \@title}
+		\end{center}
+
+		\vspace{10cm}
+		\begin{paracol}{2}
+			\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+			\subsection*{Zdający:}
+			\bf{ \Large{ \noindent\@author \par}}
+			\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+			\switchcolumn \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+			\subsection*{Prowadzący:}
+			\bf{\Large{\noindent mgr. inż. Andrzej \\ Wojtulewicz}}
+			\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+		\end{paracol}
+		\vspace*{\stretch{6}}
+		\begin{center}
+			\bf{\large{Warszawa, \@date\vskip 0.1cm}}
+		\end{center}
+	\end{titlepage}
+}
+\makeatother
+\maketitle
+
+\tableofcontents
+
+
+\chapter{Opis stanowiska}
+\label{Opis}
+
+\section{Stanowisko TCRANE}
+\label{Opis::TCRANE}
+
+\section{Enkodery inkrementalne}
+\label{Opis::Enkodery}
+
+\section{Opis wejść i wyjść obiektu}
+\label{Opis::IO}
+
+
+\chapter{Sterownik PLC}
+\label{PLC}
+
+\section{Konfiguracja sprzętowa}
+\label{PLC::Konfiguracja}
+
+\subsection{Ethernet}
+\label{PLC::Konfiguracja::Ethernet}
+
+\subsection{Analog}
+\label{PLC::Konfiguracja::Analog}
+
+\subsection{High Speed Counter}
+\label{PLC::Konfiguracja::HIOEN}
+
+\subsection{Wyjścia PWM}
+\label{PLC::Konfiguracja::PWM}
+
+\section{Mechanizm labeli}
+\label{PLC::Labels}
+
+\section{Skalowanie i bazowanie}
+\label{PLC::Bazowanie}
+
+\section{Obsługa I/O cyfrowych}
+\label{PLC::IOCyfrowe}
+
+\section{PID}
+\label{PLC::PID}
+
+\section{Tryb sterowania ręcznego}
+\label{PLC::Reka}
+
+\section{Zabezpieczenia ruchów krańcowych}
+\label{PLC::Krancowki}
+
+\section{Język ST}
+\label{PLC::ST}
+
+\chapter{Realizacja w systemie MAPS}
+\label{MAPS}
+
+\section{Panel operatorski}
+\label{MAPS::PanelOperatorski}
+
+\section{Sterowanie auto/ręka}
+\label{MAPS::AutoReka}
+
+\section{Nastawy regulatorów}
+\label{MAPS::Nastawy}
+
+\section{Wykresy}
+\label{MAPS::Wykresy}
+
+\end{document}
