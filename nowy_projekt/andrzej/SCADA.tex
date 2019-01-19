@@ -81,9 +81,40 @@
 
 \section{Stanowisko TCRANE}
 \label{Opis::TCRANE}
+Trójwymiarowy model laboratoryjnego modelu dźwigu ilustruje strukturę współczesnego 
+żurawia, skutecznie odwzorowuje stosunek wielkości do maksymalnego podnoszonego 
+ładunku. Obiekt jest wielowejściowym i wielowyjściowym systemem wyposażonym w dedykowane
+czujniki do mierzenia przemieszczeń i kątów.\\
+\indent Stanowisko laboratoryjne T-Crane posiada 5 enkoderów inkrementalnych. Trzy z nich
+mierzą położenie elementów napędzanych przez silniki. Dwa z nich znajdują się na karetce
+dźwigu i przedstawiają aktualne wychylenie obciążenia od pionu.
+
+\begin{figure}[H]
+    \label{Opis::TCRANE::Stanowisko}
+    \centering
+    \includegraphics[scale=0.5]{tcrane.png}
+    \caption{Stanowisko laboratoryjne TCRANE}
+\end{figure}
+
+W ramach projektu laboratoryjnego, mieliśmy wysterować ramię dźwigu w dwóch płaszczyznach:
+
+\begin{itemize}
+    \item obrót kolumny dźwigu (wieży)
+    \item ruch wózka wzdłuż ramienia
+\end{itemize}
 
 \section{Enkodery inkrementalne}
 \label{Opis::Enkodery}
+Enkoder (przetwornik położenia) służy do pomiaru położenia. W powyższej wersji
+mamy do czynienia z przetwornikiem obrotowym. Zatem możemy dzięki niemu określić
+położenie kątowe wokół osi. Jeżeli podłączymy go do liniowego układu przeniesienia napędu
+możemy określić położenie liniowe wyrażane w odległości.\\
+\indent Do określenia kierunku potrzebujemy dwóch sygnałów (tzw.
+fazy A i B).Do określenia pozycji wykorzystujemy dwa wejścia do zliczania 
+impulsów z fazy A i B. Wykrywanie kierunku jest wykonywane
+automatycznie w sterowniku. Przy pomocy mechanizmu sprzętowych liczników możemy w
+dowolnym momencie odczytać aktualne położenie enkodera. W pamięci
+sterownika pozycja będzie przedstawiona w odpowiednim rejestrze 32 bitowym.
 
 \section{Opis wejść i wyjść obiektu}
 \label{Opis::IO}
