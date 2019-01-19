@@ -230,10 +230,21 @@ spod adresu \texttt{SD4620}.
 
 \subsection{Wyjścia PWM}
 \label{PLC::Konfiguracja::PWM}
+Wyjścia analogowe zostały zastąpione wyjściami cyfrowymi PWM. PWM czyli \emph{Pulse Width Modifiaction} to 
+technika przybliżania sygnału analogowego poprzez sygnał prostokątny o zmiennym wypełnieniu. W projekcie,
+w ten sposób sterowaliśmy silnikami prądu stałego obiektu. W programie GX Works3 odpowiednio
+skonfigurowaliśmy 3 kanały PWM do współpracy z trzema silnikami obiektu. Do dalszej pracy 
+wykorzystaliśmy tylko dwa z nich. Kanał \emph{CH1} służył do sterowania wyciągnikiem, kanał \emph{CH2}
+sterował silnikiem wózka a kanał \emph{CH3} zajmował się sterowaniem silnika obracającym wieżą.
 
 
+\begin{figure}[H]
+    \label{PLC::Konfiguracja::HIOEN::WindowCH5}
+    \centering
+    \includegraphics[scale=0.5]{pwm.png}
+    \caption{Okno konfiguracji kanałów PWM w systemie GX Works3}
+\end{figure}
 
-\newpage
 \section{Mechanizm labeli}
 \label{PLC::Labels}
 
