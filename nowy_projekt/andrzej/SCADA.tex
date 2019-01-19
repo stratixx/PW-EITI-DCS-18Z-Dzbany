@@ -114,11 +114,68 @@ fazy A i B).Do określenia pozycji wykorzystujemy dwa wejścia do zliczania
 impulsów z fazy A i B. Wykrywanie kierunku jest wykonywane
 automatycznie w sterowniku. Przy pomocy mechanizmu sprzętowych liczników możemy w
 dowolnym momencie odczytać aktualne położenie enkodera. W pamięci
-sterownika pozycja będzie przedstawiona w odpowiednim rejestrze 32 bitowym.
+sterownika pozycja będzie przedstawiona w odpowiednim rejestrze 32 bitowym.\\
+\indent Zliczanie impulsów odbywa się za pomocą liczników \emph{High Speed Counter}.
+Pozycja zadawana w procentach jest programowo zamieniana na impulsy enkodera 
+według następującego wzoru:
+
+$$ I = \frac{STPT * MAX}{100\%}$$
+
+Dla wózka jeżdżącego wzdłuż ramienia $$MAX_{wozek} = 9000,$$
+natomiast dla wieży $$MAX_{wieza} = 2300$$
 
 \section{Opis wejść i wyjść obiektu}
 \label{Opis::IO}
 
+\subsection{Wejścia cyfrowe}
+\label{Opis::IO::Input}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{0.1\linewidth}|p{0.6\linewidth}|}
+	\hline
+	Wejście & Opis \\ \hline
+	X0 & Enkoder inkrementalny, fala A, oś X              \\ \hline
+	X1 & Enkoder inkrementalny, fala B, oś X                   \\ \hline
+	X2 & Enkoder inkrementalny, fala A, oś Y 		         \\  \hline
+	X3 & Enkoder inkrementalny, fala B, oś Y            \\ \hline
+	X4 & Enkoder inkrementalny, fala A, oś AX 		         \\  \hline
+    X5 & Enkoder inkrementalny, fala B, oś AX           \\ \hline
+    X6 & Enkoder inkrementalny, fala A, oś AY 		         \\  \hline
+    X7 & Enkoder inkrementalny, fala B, oś AY            \\ \hline
+    X10 & Enkoder inkrementalny, fala A, oś Z  		         \\  \hline
+    X11 & Enkoder inkrementalny, fala B, oś Z            \\ \hline
+    X12 & Wyłącznik krańcowy, oś Z 		         \\  \hline
+    X13 & Wyłącznik krańcowy, oś X 		         \\  \hline
+    X14 & Wyłącznik krańcowy, oś Y 		         \\  \hline
+    X15 & Flaga limitu temperatury, oś Z 		         \\  \hline
+    X16 & Flaga limitu temperatury, oś Y 		         \\  \hline
+    X17 & Flaga limitu temperatury, oś X 		         \\  \hline
+	\end{tabular}
+    \caption{Wejścia instalacji INTECO TCRANE}
+\end{table}
+\newpage
+
+\subsection{Wyjścia cyfrowe}
+\label{Opis::IO::Output}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{0.1\linewidth}|p{0.6\linewidth}|}
+	\hline
+    Wejście & Opis \\ \hline
+    Y0 & Sygnał PWM dla silnika DC, oś X  \\  \hline
+	Y1 & Sygnał PWM dla silnika DC, oś Z  \\ \hline
+	Y2 & Sygnał PWM dla silnika DC, oś Y  \\ \hline
+	Y3 & Hamulec silnika DC, oś Z 		  \\  \hline
+	Y4 & Wybór kierunku obrotów silnika DC, oś Z         \\ \hline
+	Y5 & Hamulec silnika DC, oś Y 		  \\  \hline
+	Y6 & Wybór kierunku obrotów silnika DC, oś Y         \\ \hline
+    Y7 & Hamulec silnika DC, oś X 		  \\  \hline
+    Y10 & Wybór kierunku obrotów silnika DC, oś X         \\ \hline
+	\end{tabular}
+	\caption{Wyjścia instalacji INTECO TCRANE}
+\end{table}
 
 \chapter{Sterownik PLC}
 \label{PLC}
