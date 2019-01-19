@@ -186,15 +186,54 @@ natomiast dla wieży $$MAX_{wieza} = 2300$$
 \subsection{Ethernet}
 \label{PLC::Konfiguracja::Ethernet}
 
+W celu umożliwienia komunikacji sterownika z komputerem PC, odpowiednio skonfigurowaliśmy
+połączenie w sieci Ethernet. Komunikacja odbywa się za pomocą protokołu SLMP (SeamLess 
+Message Protocol) na porcie 1280. 
+
+\begin{figure}[H]
+    \label{PLC::Konfiguracja::Ethernet::Window}
+    \centering
+    \includegraphics[scale=0.3]{ethernet.png}
+    \caption{Konfiguracja komunikacji w sieci Ethernet w systemie GX Works3}
+\end{figure}
+
 \subsection{Analog}
 \label{PLC::Konfiguracja::Analog}
+
+Obsługa wejść analogowych została przedstawiona jako jedno z kryterium oceny projektu.
+Niestety, stanowisko INTECO TCRANE nie zawiera żadnych wejść i wyjść analogowych. 
 
 \subsection{High Speed Counter}
 \label{PLC::Konfiguracja::HIOEN}
 
+Odczyt z enkoderów inkrementalnych odbywał się za pomocą specjalnych liczników \emph{High Speed
+Counter}. Skonfigurowaliśmy dwa kanały CH1 oraz CH5 do odczytu pozycji wózka oraz obrotu wieży. 
+Wartość pozycji wózka odczytywaliśmy spod adresu \texttt{SD4500} a wartość pozycji kątowej wieży 
+spod adresu \texttt{SD4620}.
+
+\newpage
+
+\begin{figure}[H]
+    \label{PLC::Konfiguracja::HIOEN::WindowCH1}
+    \centering
+    \includegraphics[scale=0.3]{hioen.png}
+    \caption{Okno konfiguracji kanału \emph{CH1} High Speed Counters w systemie GX Works3}
+\end{figure}
+
+\begin{figure}[H]
+    \label{PLC::Konfiguracja::HIOEN::WindowCH5}
+    \leftskip-1.5cm
+    \includegraphics[scale=0.3]{hioen2.png}
+    \caption{Okno konfiguracji kanału \emph{CH5} High Speed Counters w systemie GX Works3}
+\end{figure}
+
+
 \subsection{Wyjścia PWM}
 \label{PLC::Konfiguracja::PWM}
 
+
+
+\newpage
 \section{Mechanizm labeli}
 \label{PLC::Labels}
 
