@@ -20,7 +20,7 @@ PWM(FALSE, K1, K100, Y2);
 
 autoControl:=TRUE;
 
-//Parametry regulatora wbudowanego PID
+//Parametry regulatora wbudowanego PID osi X
 PID_X.params[0] := K100; //okres regulacji w milisekundach
 PID_X.params[3] := K3; //wzmocnienie regulatora P
 PID_X.params[4] := K5; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
@@ -34,7 +34,7 @@ SET(TRUE, PID_X.params[1].5); //aktywacja limitow na wyjsciu regulatora
 SET(TRUE, PID_X.params[1].0); //trzeba odwrocic kierunek dzialania PID 
 
 
-//Parametry regulatora wbudowanego PID
+//Parametry regulatora wbudowanego PID osi Z
 PID_Z.params[0] := K100; //okres regulacji w milisekundach
 PID_Z.params[3] := K1; //wzmocnienie regulatora P
 PID_Z.params[4] := K2; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
@@ -47,4 +47,3 @@ PID_Z.params[23] := K0; //dolny limit wartosci wyjsciowej z regulatora - -||-
 SET(TRUE, PID_Z.params[1].5); //aktywacja limitow na wyjsciu regulatora
 SET(TRUE, PID_Z.params[1].0); //trzeba odwrocic kierunek dzialania PID 
 
-EI(TRUE);

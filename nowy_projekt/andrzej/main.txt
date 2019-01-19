@@ -1,47 +1,42 @@
-MOV(TRUE, SD4500, enc_X);
-MOV(TRUE, SD4620, enc_Z);
+MOV(TRUE, SD4500, enc_X);	// odczyt enkodera osi X
+MOV(TRUE, SD4620, enc_Z);	// odczyt enkodera osi Z
 
-MOVB(TRUE, X13, switch3_X); // karetka, aktywna jedynka
-MOVB(TRUE, X14, switch2_Y); // Twoja stara, aktywna jedynka
-MOVB(TRUE, X12, switch1_Z); // obrot kolumny, aktywna jedynka
+MOVB(TRUE, X13, switch3_X); // Switch3_X Wyłącznik krańcowy, oś X - karetka
+MOVB(TRUE, X14, switch2_Y); // Switch2_Y Wyłącznik krańcowy, oś Y - podnośnik
+MOVB(TRUE, X12, switch1_Z); // Switch1_Z Wyłącznik krańcowy, oś Z - obrót dzwigu
 
+MOVB(TRUE, X15, therm_Z);	// Flaga limitu temperatury, oś Z 
+MOVB(TRUE, X16, therm_Y);	// Flaga limitu temperatury, oś Y 
+MOVB(TRUE, X17, therm_X);	// Flaga limitu temperatury, oś X 
 
-
-//Y0:=TRUE;
-//Y1:=TRUE;
-//Y2:=TRUE;
-//Y3:=TRUE;
-//Y5:=TRUE; // HAMULEC Z
-//Y7:=TRUE; // HAMULEC X
 
 Y4:=FALSE; //DIR OS Z
-Y6:=FALSE; //DIR OS Y - TEN PODNOSNIK
+Y6:=FALSE; //DIR OS Y
 
 
-
-
-IF X15 AND X16 AND X17 THEN
+IF therm_Z AND therm_Y AND therm_X THEN
+	// PROCEDURA HOMINGU OSI
 	IF start_homing = TRUE THEN
 		IF homed_X = FALSE THEN
 			IF switch3_X = FALSE THEN
-				Y7:=TRUE;
-				PWM(TRUE, K30, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO
+				Y7:=TRUE; // DEAKTYWACJA HAMULCA
+				PWM(TRUE, K30, K100, Y0); // PWM OSI X - KARETKA
 				ELSE
 				PWM(FALSE, K1, K100, Y0);
-				Y7:=FALSE;
-				DHCMOVP(TRUE, 0, 0, SD4500); 
+				Y7:=FALSE; // AKTYWACJA HAMULCA
+				DHCMOVP(TRUE, 0, 0, SD4500); // WYZEROWANIE ENKODERA OSI X
 				homed_X:=TRUE;
 			END_IF;
 		END_IF;
 
 		IF homed_Z = FALSE THEN
 			IF switch1_Z = FALSE THEN
-				Y5:=TRUE;
-				PWM(TRUE, K30, K100, Y2); // y0 = x   TO JEST KOLUMNA 
+				Y5:=TRUE; // DEAKTYWACJA HAMULCA
+				PWM(TRUE, K30, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
 				ELSE
 				PWM(FALSE, K1, K100, Y2);
-				DHCMOVP(TRUE, 0, 0, SD4620); 
-				Y5:=FALSE;
+				DHCMOVP(TRUE, 0, 0, SD4620); // WYZEROWANIE ENKODERA OSI Z
+				Y5:=FALSE; // AKTYWACJA HAMULCA
 				homed_Z:=TRUE;
 			END_IF;
 		END_IF;
@@ -56,83 +51,79 @@ IF X15 AND X16 AND X17 THEN
 			IF homed_X = TRUE THEN		
 				IF enc_X > K9000 AND enc_X < -K50 THEN
 					MOVB(TRUE, FALSE, Y7);
-					PWM(FALSE, K1, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO
+					PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA
 					MOVB(TRUE, FALSE, homed_X);
 				ELSE		
 					MOVB(TRUE, TRUE, PID_X.Control_ON);
 					MOV(TRUE, enc_X, PID_X.PV);
 					MOV(TRUE, stpt_X*K90, PID_X.SV);
 					PID(PID_X.Control_ON, PID_X.SV , PID_X.PV , PID_X.params[0] , PID_X.MV); 
-					PWM(TRUE, PID_X.MV, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO		
+					PWM(TRUE, PID_X.MV, K100, Y0); // PWM OSI X - KARETKA		
 					
 					IF PID_X.MV < K50 THEN
 						MOVB(TRUE, FALSE, Y10);
 						MOVB(TRUE, TRUE, Y7);
-						PWM(TRUE, K51-PID_X.MV, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO			
+						PWM(TRUE, K51-PID_X.MV, K100, Y0); // PWM OSI X - KARETKA			
 						ELSE 
 						IF PID_X.MV > K50 THEN
 							MOVB(TRUE, TRUE, Y10);
 							MOVB(TRUE, TRUE, Y7);
-							PWM(TRUE, PID_X.MV-K49, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO		
+							PWM(TRUE, PID_X.MV-K49, K100, Y0); // PWM OSI X - KARETKA		
 							ELSE	
 							MOVB(TRUE, FALSE, Y7);
-							PWM(FALSE, K1, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO	
+							PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA	
 						END_IF;
 					END_IF;
 				END_IF;
 
 			END_IF;
-			/*	
-			IF homed_Z = TRUE THEN
-						
-			PID(PID_Z.Control_ON, PID_Z.SV , PID_Z.PV , PID_Z.params[0] , PID_Z.MV); 
-			END_IF; 
-			*/
+
 			IF homed_Z = TRUE THEN	
 				IF enc_Z > K2300 AND enc_Z < -K50 THEN
 					MOVB(TRUE, FALSE, Y5);
-					PWM(FALSE, K1, K100, Y2); // 
+					PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
 					MOVB(TRUE, FALSE, homed_Z);
 				ELSE	
 					MOVB(TRUE, TRUE, PID_Z.Control_ON);
 					MOV(TRUE, enc_Z, PID_Z.PV);
 					MOV(TRUE, stpt_Z*K23, PID_Z.SV);
 					PID(PID_Z.Control_ON, PID_Z.SV , PID_Z.PV , PID_Z.params[0] , PID_Z.MV); 
-					PWM(TRUE, PID_Z.MV, K100, Y2); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO		
+					PWM(TRUE, PID_Z.MV, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU	
 				
 					IF PID_Z.MV < K50 THEN
 						MOVB(TRUE, FALSE, Y6);
 						MOVB(TRUE, TRUE, Y5);
-						PWM(TRUE, K51-PID_Z.MV, K100, Y2); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO			
+						PWM(TRUE, K51-PID_Z.MV, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU			
 						ELSE 
 						IF PID_Z.MV > K50 THEN
 							MOVB(TRUE, TRUE, Y6);
 							MOVB(TRUE, TRUE, Y5);
-							PWM(TRUE, PID_Z.MV-K49, K100, Y2); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO		
+							PWM(TRUE, PID_Z.MV-K49, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU		
 							ELSE	
 							MOVB(TRUE, FALSE, Y5);
-							PWM(FALSE, K1, K100, Y2); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO	
+							PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU	
 						END_IF;
 					END_IF;
 				END_IF;
 
 			END_IF;
 		ELSE
+			// PRZEKROCZENIE ZAKRESÓW
 			IF enc_Z > K2300 AND enc_Z < -K50 THEN
 				MOVB(TRUE, FALSE, Y5);
-				PWM(FALSE, K1, K100, Y2); // 
+				PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
 				MOVB(TRUE, FALSE, homed_Z);
 				ELSE
-					PWM(TRUE, R_MV_Z, K100, Y2);	
+					PWM(TRUE, R_MV_Z, K100, Y2);	// PWM OSI Z - OBRÓT DZWIGU
 				IF R_MV_Z < K50 THEN
 					MOVB(TRUE, FALSE, Y6);
 					MOVB(TRUE, TRUE, Y5);
-					PWM(TRUE, K51-R_MV_Z, K100, Y2); 		
+					PWM(TRUE, K51-R_MV_Z, K100, Y2); 	// PWM OSI Z - OBRÓT DZWIGU	
 					ELSE 
 					IF R_MV_Z > K50 THEN
 						MOVB(TRUE, TRUE, Y6);
 						MOVB(TRUE, TRUE, Y5);
-						PWM(TRUE, R_MV_Z-K49, K100, Y2); 
+						PWM(TRUE, R_MV_Z-K49, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
 						ELSE	
 						MOVB(TRUE, FALSE, Y5);
 						PWM(FALSE, K1, K100, Y2); 
@@ -140,31 +131,33 @@ IF X15 AND X16 AND X17 THEN
 				END_IF;
 			END_IF;
 			
+			// PRZEKROCZENIE ZAKRESÓW
 			IF enc_X > K9000 AND enc_X < -K50 THEN
 				MOVB(TRUE, FALSE, Y7);
-				PWM(FALSE, K1, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO
+				PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA
 				MOVB(TRUE, FALSE, homed_X);
 				ELSE		
-				PWM(TRUE, R_MV_X, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO		
+				PWM(TRUE, R_MV_X, K100, Y0); // PWM OSI X - KARETKA		
 					
 				IF R_MV_X < K50 THEN
 					MOVB(TRUE, FALSE, Y10);
 					MOVB(TRUE, TRUE, Y7);
-					PWM(TRUE, K51-R_MV_X, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO			
+					PWM(TRUE, K51-R_MV_X, K100, Y0); // PWM OSI X - KARETKA		
 					ELSE 
 					IF R_MV_X > K50 THEN
 						MOVB(TRUE, TRUE, Y10);
 						MOVB(TRUE, TRUE, Y7);
-						PWM(TRUE, R_MV_X-K49, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO		
+						PWM(TRUE, R_MV_X-K49, K100, Y0); // PWM OSI X - KARETKA	
 						ELSE	
 						MOVB(TRUE, FALSE, Y7);
-						PWM(FALSE, K1, K100, Y0); // y0 = x   TO JEST KARETKA NA 50 JEZDZI WOLNO	
+						PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA	
 					END_IF;
 				END_IF;
 			END_IF;
 		END_IF;
 	END_IF;
-ELSE	
+ELSE
+	// STOP AWARYJNY	
 	MOVB(TRUE, FALSE, Y7);
 	PWM(FALSE, K1, K100, Y0); //
 	MOVB(TRUE, FALSE, Y5);
