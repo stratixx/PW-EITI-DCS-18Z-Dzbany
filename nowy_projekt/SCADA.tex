@@ -206,9 +206,9 @@ Niestety, stanowisko INTECO TCRANE nie zawiera żadnych wejść i wyjść analog
 \subsection{High Speed Counter}
 \label{PLC::Konfiguracja::HIOEN}
 
-Odczyt z enkoderów inkrementalnych odbywał się za pomocą specjalnych liczników \emph{High Speed
+Odczyt z enkoderów inkrementalnych odbywał się za pomocą specjalnych liczników \emph{High Speed
 Counter}. Skonfigurowaliśmy dwa kanały CH1 oraz CH5 do odczytu pozycji wózka oraz obrotu wieży. 
-Wartość pozycji wózka odczytywaliśmy spod adresu \texttt{SD4500} a wartość pozycji kątowej wieży 
+Wartość pozycji wózka odczytywaliśmy spod adresu \texttt{SD4500} a wartość pozycji kątowej wieży 
 spod adresu \texttt{SD4620}.
 
 \newpage
@@ -238,6 +238,8 @@ wykorzystaliśmy tylko dwa z nich. Kanał \emph{CH1} służył do sterowania wyc
 sterował silnikiem wózka a kanał \emph{CH3} zajmował się sterowaniem silnika obracającym wieżą.
 
 
+
+
 \begin{figure}[H]
     \label{PLC::Konfiguracja::HIOEN::WindowCH5}
     \centering
@@ -248,23 +250,442 @@ sterował silnikiem wózka a kanał \emph{CH3} zajmował się sterowaniem silnik
 \section{Mechanizm labeli}
 \label{PLC::Labels}
 
+Zarejestrowaliśmy szereg labeli globalnych zastępujących m.in. wejścia X, ponieważ własne nazwy zwiększają uniwersalność i znacznie zwiększają czytelność kodu.
+
+\begin{figure}[H]
+    \label{PLC::Konfiguracja::HIOEN::WindowCH5}
+    \centering
+    \includegraphics[scale=0.5]{global_label.png}
+    \caption{Ustawienia labeli globalnych}
+\end{figure}
+
 \section{Skalowanie i bazowanie}
 \label{PLC::Bazowanie}
+
+\subsection{Skalowanie osi X}
+	Odczytując wartości enkodera osi X w dwóch skrajnych pozycjach i dzieląc ich różnicę(9421) przez maksymalną założoną wartość pozycji zadanej(100) otrzymaliśmy zaokrąglony współczynnik skalowania(94)
+ Efektem jest operacja:
+MOV(TRUE, stpt\_X*K94, PID\_X.SV);
+
+\subsection{Skalowanie osi Z}
+	Odczytując wartości enkodera osi Z w dwóch skrajnych pozycjach i dzieląc ich różnicę(2300) przez maksymalną założoną wartość pozycji zadanej(100) otrzymaliśmy zaokrąglony współczynnik skalowania(23)
+ Efektem jest operacja:
+MOV(TRUE, stpt\_Z*K23, PID\_Z.SV);
+
+\subsection{Bazowanie osi}
+Bazowanie wszystkich osi inicjowane jest stanem wysokim zmiennej start\_homing. Po spełnieniu tego warunku rozpoczynany jest ruch osi w kierunku krańcówek. Osie poruszają się do chwili gdy osiągnął pozycje swoich krańcówek bazujących. W następnym kroku osie są zatrzymywane, ustawiane są bity informujące o zakończeniu bazowania konkretnej osi i wykonywane jest zerowanie liczników enkoderów osi.
+Zbazowanie każdej z osi kończy proces bazowania dzwigu. Możliwe staje się sterowanie za pomocą pozycji zadanych poprzez regulatory PID.
+
+
+
+IF start\_homing = TRUE THEN
+	
+\quad IF homed\_X = FALSE THEN
+		
+\quad \quad IF switch3\_X = FALSE THEN
+
+\quad \quad \quad Y7:=TRUE; // DEAKTYWACJA HAMULCA
+
+\quad \quad \quad PWM(TRUE, K30, K100, Y0); // PWM OSI X - KARETKA
+
+\quad \quad \quad ELSE
+
+\quad \quad \quad PWM(FALSE, K1, K100, Y0);
+
+\quad \quad \quad Y7:=FALSE; // AKTYWACJA HAMULCA
+
+\quad \quad \quad DHCMOVP(TRUE, 0, 0, SD4500); // WYZEROWANIE ENKODERA OSI X
+
+\quad \quad \quad homed\_X:=TRUE;
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+
+\quad IF homed\_Z = FALSE THEN
+
+\quad \quad IF switch1\_Z = FALSE THEN
+
+\quad \quad \quad Y5:=TRUE; // DEAKTYWACJA HAMULCA
+
+\quad \quad \quad PWM(TRUE, K30, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
+
+\quad \quad \quad ELSE
+
+\quad \quad \quad PWM(FALSE, K1, K100, Y2);
+
+\quad \quad \quad DHCMOVP(TRUE, 0, 0, SD4620); // WYZEROWANIE ENKODERA OSI Z
+
+\quad \quad \quad Y5:=FALSE; // AKTYWACJA HAMULCA
+
+\quad \quad \quad homed\_Z:=TRUE;
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+		
+\quad IF homed\_X AND homed\_Z THEN
+
+\quad \quad start\_homing := FALSE;
+
+\quad END\_IF;
+
+END\_IF;
+
 
 \section{Obsługa I/O cyfrowych}
 \label{PLC::IOCyfrowe}
 
+\subsection{Odczyt wejść cyfrowych}
+Stany wejść cyfrowych w celu zwiększenia czytelności kodu są przepisywane do uprzednio zdefiniowanych labeli, które następnie są wykorzystywane w programie.
+	
+Przykładowy odczyt stanu krańcówek osi:
+	
+MOVB(TRUE, X13, switch3\_X);
+
+MOVB(TRUE, X14, switch2\_Y);
+
+MOVB(TRUE, X12, switch1\_Z);
+
+
+
+Dalsze przykładowe wykorzystanie labeli do sterowania:
+
+IF switch3\_X = FALSE THEN
+
+\quad Y7:=TRUE; // DEAKTYWACJA HAMULCA
+
+\quad PWM(TRUE, K30, K100, Y0); // PWM OSI X - KARETKA
+
+\quad ELSE
+
+\quad PWM(FALSE, K1, K100, Y0);
+
+\quad Y7:=FALSE; // AKTYWACJA HAMULCA
+
+\quad DHCMOVP(TRUE, 0, 0, SD4500); // WYZEROWANIE ENKODERA OSI X
+
+\quad homed\_X:=TRUE;
+
+END\_IF;
+ 
+\subsection{Zapis wyjść cyfrowych}
+Zapis wyjść cyfrowych odbywa się poprzez bezpośrednie przypisanie stanu wyjścia. Nie zdecydowaliśmy się na zastosowanie dedykowanych labeli, ponieważ wyjść było stosunkowo niewiele.
+	Przykładowy zapis wyjścia cyfrowego:
+		Y5:=TRUE; // DEAKTYWACJA HAMULCA OSI Z
+
+
 \section{PID}
 \label{PLC::PID}
+
+Zastosowaliśmy wbudowaną strukturę regulatora PID. Do jej wykorzystania potrzebne było stworzenie struktury S\_PID zawierającej SV, PV, MV, parametry regulatora oraz bit aktywujący regulator.
+
+\begin{figure}[H]
+    \label{PLC::Konfiguracja::HIOEN::WindowCH5}
+    \centering
+    \includegraphics[scale=0.5]{s_pid_struct.png}
+    \caption{Struktura S\_PID}
+\end{figure}
+
+
+W programie inicjującym znajduje się inicjalizacja parametrów regulatorów PID 
+
+//Parametry regulatora wbudowanego PID osi X
+
+PID\_X.params[0] := K100; //okres regulacji w milisekundach
+
+PID\_X.params[3] := K3; //wzmocnienie regulatora P
+
+PID\_X.params[4] := K5; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
+
+//mowiac calkowanie wylaczone
+
+PID\_X.params[5] := K0; //KD = 0 oznacza zerowe wzmocnienie rozniczkowania
+
+PID\_X.params[6] := K0; //TD = 0 oznacza wylaczone rozniczkowanie 
+
+PID\_X.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega
+
+//rowniez efektowi wind-up
+
+PID\_X.params[23] := K1; //dolny limit wartosci wyjsciowej z regulatora - -||-
+
+SET(TRUE, PID\_X.params[1].5); //aktywacja limitow na wyjsciu regulatora
+
+SET(TRUE, PID\_X.params[1].0); //trzeba odwrocic kierunek dzialania PID 
+
+
+//Parametry regulatora wbudowanego PID osi Z
+
+PID\_Z.params[0] := K100; //okres regulacji w milisekundach
+
+PID\_Z.params[3] := K1; //wzmocnienie regulatora P
+
+PID\_Z.params[4] := K2; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
+
+//mowiac calkowanie wylaczone
+
+PID\_Z.params[5] := K0; //KD = 0 oznacza zerowe wzmocnienie rozniczkowania
+
+PID\_Z.params[6] := K0; //TD = 0 oznacza wylaczone rozniczkowanie 
+
+PID\_Z.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega
+
+//rowniez efektowi wind-up
+
+PID\_Z.params[23] := K0; //dolny limit wartosci wyjsciowej z regulatora - -||-
+
+SET(TRUE, PID\_Z.params[1].5); //aktywacja limitow na wyjsciu regulatora
+
+SET(TRUE, PID\_Z.params[1].0); //trzeba odwrocic kierunek dzialania PID 
+
+
+Regulatory PID pracują w głównym programie. Kolejne wartości sterowania MV wyznaczane są poprzez wywołania funkcji PID(). Jeśli wyznaczone MV jest większe od 50 wykonywany jest ruch w przód z zadanym wypełnieniem PWM, a w przeciwnym wypadku wykonywany jest ruch w tył z zadanym wypełnieniem PWM.
+
+Sekcja regulatora PID osi X:
+
+\quad MOVB(TRUE, TRUE, PID\_X.Control\_ON);
+
+\quad MOV(TRUE, enc\_X, PID\_X.PV);
+
+\quad MOV(TRUE, stpt\_X*K94, PID\_X.SV);
+
+\quad PID(PID\_X.Control\_ON, PID\_X.SV , PID\_X.PV , PID\_X.params[0] , PID\_X.MV); 
+
+\quad PWM(TRUE, PID\_X.MV, K100, Y0); // PWM OSI X - KARETKA				
+	
+\quad IF PID\_X.MV < K50 THEN
+
+\quad \quad MOVB(TRUE, FALSE, Y10);
+
+\quad \quad MOVB(TRUE, TRUE, Y7);
+
+\quad \quad PWM(TRUE, K51-PID\_X.MV, K100, Y0); // PWM OSI X - KARETKA		
+	
+\quad ELSE 
+
+\quad \quad IF PID\_X.MV > K50 THEN
+
+\quad \quad \quad MOVB(TRUE, TRUE, Y10);
+
+\quad \quad \quad MOVB(TRUE, TRUE, Y7);
+
+\quad \quad \quad PWM(TRUE, PID\_X.MV-K49, K100, Y0); // PWM OSI X - KARETKA	
+	
+\quad \quad \quad ELSE	
+
+\quad \quad \quad MOVB(TRUE, FALSE, Y7);
+
+\quad \quad \quad PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA	
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+
+Sekcja regulatora PID osi Z:
+
+\quad MOVB(TRUE, TRUE, PID\_Z.Control\_ON);
+
+\quad MOV(TRUE, enc\_Z, PID\_Z.PV);
+
+\quad MOV(TRUE, stpt\_Z*K23, PID\_Z.SV);
+
+\quad PID(PID\_Z.Control\_ON, PID\_Z.SV , PID\_Z.PV , PID\_Z.params[0] , PID\_Z.MV); 
+
+\quad PWM(TRUE, PID\_Z.MV, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU				
+	
+\quad IF PID\_Z.MV < K50 THEN
+
+\quad \quad MOVB(TRUE, FALSE, Y6);
+
+\quad \quad MOVB(TRUE, TRUE, Y5);
+
+\quad \quad PWM(TRUE, K51-PID\_Z.MV, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU			
+
+\quad \quad ELSE 
+
+\quad \quad IF PID\_Z.MV > K50 THEN
+
+\quad \quad \quad MOVB(TRUE, TRUE, Y6);
+
+\quad \quad \quad MOVB(TRUE, TRUE, Y5);
+
+\quad \quad \quad PWM(TRUE, PID\_Z.MV-K49, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU		
+
+\quad \quad \quad ELSE	
+
+\quad \quad \quad MOVB(TRUE, FALSE, Y5);
+
+\quad \quad \quad PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU	
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+
+
+
 
 \section{Tryb sterowania ręcznego}
 \label{PLC::Reka}
 
+Sterowanie ręczne możliwe jest po zresetowaniu flagi AUTO\_CONTROL(flaga domyślnie ustawiona). Jeśli flaga jest zresetowana program przechodzi do sekcji kodu w której odbywa się bezpośrednie wysterowanie wyjść PWM wartościami zmiennych R\_MV\_Z dla osi Z i R\_MV\_X dla osi X
+sekcja kodu sterowania ręcznego osią Z:
+
+\quad IF enc\_Z > K2350 OR enc\_Z < -K50 THEN
+
+\quad \quad // PRZEKROCZENIE ZAKRESÓW OSI Z
+
+\quad \quad MOVB(TRUE, FALSE, Y5);
+
+\quad \quad PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
+
+\quad \quad MOVB(TRUE, FALSE, homed\_Z);
+
+\quad \quad ELSE
+
+\quad \quad //STEROWANIE RĘCZNE OSI Z
+
+\quad \quad PWM(TRUE, R\_MV\_Z, K100, Y2);	// PWM OSI Z - OBRÓT DZWIGU
+
+\quad \quad IF R\_MV\_Z < K50 THEN
+
+\quad \quad \quad MOVB(TRUE, FALSE, Y6);
+
+\quad \quad \quad MOVB(TRUE, TRUE, Y5);
+
+\quad \quad \quad PWM(TRUE, K51-R\_MV\_Z, K100, Y2); 	// PWM OSI Z - OBRÓT DZWIGU	
+
+\quad \quad \quad ELSE 
+
+\quad \quad \quad IF R\_MV\_Z > K50 THEN
+
+\quad \quad \quad \quad MOVB(TRUE, TRUE, Y6);
+
+\quad \quad \quad \quad MOVB(TRUE, TRUE, Y5);
+
+\quad \quad \quad \quad PWM(TRUE, R\_MV\_Z-K49, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
+
+\quad \quad \quad \quad ELSE
+
+\quad \quad \quad \quad MOVB(TRUE, FALSE, Y5);
+
+\quad \quad \quad \quad PWM(FALSE, K1, K100, Y2); 
+
+\quad \quad \quad END\_IF;
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+
+sekcja kodu sterowania ręcznego osią X:
+
+\quad IF enc\_X > K9450 OR enc\_X < -K50 THEN
+
+\quad \quad // PRZEKROCZENIE ZAKRESÓW OSI X
+
+\quad \quad MOVB(TRUE, FALSE, Y7);
+
+\quad \quad PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA
+
+\quad \quad MOVB(TRUE, FALSE, homed\_X);
+
+\quad \quad ELSE\quad 
+
+\quad \quad // STEROWANIE RĘCZNE OSI X\quad 
+
+\quad \quad PWM(TRUE, R\_MV\_X, K100, Y0); // PWM OSI X - KARETKA\quad \quad 
+
+\quad \quad \quad 
+
+\quad \quad IF R\_MV\_X < K50 THEN
+
+\quad \quad MOVB(TRUE, FALSE, Y10);
+
+\quad \quad \quad MOVB(TRUE, TRUE, Y7);
+
+\quad \quad \quad PWM(TRUE, K51-R\_MV\_X, K100, Y0); // PWM OSI X - KARETKA\quad \quad 
+
+\quad \quad \quad ELSE 
+
+\quad \quad \quad IF R\_MV\_X > K50 THEN
+
+\quad \quad \quad \quad MOVB(TRUE, TRUE, Y10);
+
+\quad \quad \quad \quad MOVB(TRUE, TRUE, Y7);
+
+\quad \quad \quad \quad PWM(TRUE, R\_MV\_X-K49, K100, Y0); // PWM OSI X - KARETKA\quad 
+
+\quad \quad \quad \quad ELSE\quad 
+
+\quad \quad \quad \quad MOVB(TRUE, FALSE, Y7);
+
+\quad \quad \quad \quad PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA\quad 
+
+\quad \quad \quad END\_IF;
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+
+
 \section{Zabezpieczenia ruchów krańcowych}
 \label{PLC::Krancowki}
 
+W projekcie założyliśmy, że sytuacja w której któraś z osi wyjdzie poza założony dopuszczalny zakres ruchów jest ona natychmiast zatrzymywana i gaszona jest flaga zbazowania danej osi. Działaniem naprawczym w takiej sytuacji jest przejście na tryb sterowania automatycznego i ponowne zainicjowanie bazowania osi ustawiając flagę start\_homing
+sekcja kodu zabezpieczająca ruchy krańcowe osi X:
+
+\quad IF homed\_X = TRUE THEN
+
+\quad \quad IF enc\_X > K9450 OR enc\_X < -K50 THEN
+
+\quad \quad \quad MOVB(TRUE, FALSE, Y7);
+
+\quad \quad \quad PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA
+
+\quad \quad \quad MOVB(TRUE, FALSE, homed\_X);
+
+\quad \quad ELSE\quad \quad 
+
+\quad \quad \quad //automatyczne lub ręczne sterowanie osi X
+
+\quad \quad \quad …
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+
+
+
+sekcja kodu zabezpieczająca ruchy krańcowe osi Z:
+
+
+
+\quad IF homed\_Z = TRUE THEN
+
+\quad \quad IF enc\_Z > K2350 OR enc\_Z < -K50 THEN
+
+\quad \quad \quad MOVB(TRUE, FALSE, Y5);
+
+\quad \quad \quad PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
+
+\quad \quad \quad MOVB(TRUE, FALSE, homed\_Z);
+
+\quad \quad ELSE\quad 
+
+\quad \quad \quad //automatyczne lub ręczne sterowanie osi Z
+
+\quad \quad \quad …
+
+\quad \quad END\_IF;
+
+\quad END\_IF;
+
+
+
 \section{Język ST}
 \label{PLC::ST}
+
+Listingi kodu zawarte powyżej jednoznacznie wskazują na pomyślne wykorzystanie języka ST.
 
 \chapter{Realizacja w systemie MAPS}
 \label{MAPS}
