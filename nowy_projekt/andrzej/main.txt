@@ -49,14 +49,14 @@ IF therm_Z AND therm_Y AND therm_X THEN
 	IF start_homing = FALSE THEN
 		IF autoControl THEN
 			IF homed_X = TRUE THEN		
-				IF enc_X > K9000 AND enc_X < -K50 THEN
+				IF enc_X > K9450 OR enc_X < -K50 THEN
 					MOVB(TRUE, FALSE, Y7);
 					PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA
 					MOVB(TRUE, FALSE, homed_X);
 				ELSE		
 					MOVB(TRUE, TRUE, PID_X.Control_ON);
 					MOV(TRUE, enc_X, PID_X.PV);
-					MOV(TRUE, stpt_X*K90, PID_X.SV);
+					MOV(TRUE, stpt_X*K94, PID_X.SV);
 					PID(PID_X.Control_ON, PID_X.SV , PID_X.PV , PID_X.params[0] , PID_X.MV); 
 					PWM(TRUE, PID_X.MV, K100, Y0); // PWM OSI X - KARETKA		
 					
@@ -79,7 +79,7 @@ IF therm_Z AND therm_Y AND therm_X THEN
 			END_IF;
 
 			IF homed_Z = TRUE THEN	
-				IF enc_Z > K2300 AND enc_Z < -K50 THEN
+				IF enc_Z > K2350 OR enc_Z < -K50 THEN
 					MOVB(TRUE, FALSE, Y5);
 					PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
 					MOVB(TRUE, FALSE, homed_Z);
@@ -107,14 +107,15 @@ IF therm_Z AND therm_Y AND therm_X THEN
 				END_IF;
 
 			END_IF;
-		ELSE
-			// PRZEKROCZENIE ZAKRESÓW
-			IF enc_Z > K2300 AND enc_Z < -K50 THEN
+		ELSE // MANUAL CONTROL
+			IF enc_Z > K2350 OR enc_Z < -K50 THEN
+				// PRZEKROCZENIE ZAKRESÓW OSI Z
 				MOVB(TRUE, FALSE, Y5);
 				PWM(FALSE, K1, K100, Y2); // PWM OSI Z - OBRÓT DZWIGU
 				MOVB(TRUE, FALSE, homed_Z);
 				ELSE
-					PWM(TRUE, R_MV_Z, K100, Y2);	// PWM OSI Z - OBRÓT DZWIGU
+				//STEROWANIE RĘCZNE OSI Z
+				PWM(TRUE, R_MV_Z, K100, Y2);	// PWM OSI Z - OBRÓT DZWIGU
 				IF R_MV_Z < K50 THEN
 					MOVB(TRUE, FALSE, Y6);
 					MOVB(TRUE, TRUE, Y5);
@@ -131,12 +132,13 @@ IF therm_Z AND therm_Y AND therm_X THEN
 				END_IF;
 			END_IF;
 			
-			// PRZEKROCZENIE ZAKRESÓW
-			IF enc_X > K9000 AND enc_X < -K50 THEN
+			IF enc_X > K9450 OR enc_X < -K50 THEN
+				// PRZEKROCZENIE ZAKRESÓW OSI X
 				MOVB(TRUE, FALSE, Y7);
 				PWM(FALSE, K1, K100, Y0); // PWM OSI X - KARETKA
 				MOVB(TRUE, FALSE, homed_X);
-				ELSE		
+				ELSE	
+				// STEROWANIE RĘCZNE OSI X	
 				PWM(TRUE, R_MV_X, K100, Y0); // PWM OSI X - KARETKA		
 					
 				IF R_MV_X < K50 THEN
