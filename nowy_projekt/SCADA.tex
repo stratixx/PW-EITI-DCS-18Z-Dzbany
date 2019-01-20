@@ -272,13 +272,66 @@ sterował silnikiem wózka a kanał \emph{CH3} zajmował się sterowaniem silnik
 \section{Panel operatorski}
 \label{MAPS::PanelOperatorski}
 
+Na podstawie odpowiednio wykonanej wcześniej konfiguracji sprzętowej sterownika PLC jesteśmy w stanie bezpośrednio połączyć działanie stanowiska z systemem MAPS. Po uruchomieniu serwera (oprogramowania \emph{MAPS Server} i \emph{Agent Server}) i środowiska do projektowania interfejsów operatorskich (\emph{MAPS Designer}) rozpoczęsliśmy od utworzenia projektu.
+
+Kolejnym krokiem jest dodanie do systemu MAPS odpowiednich agentów. Akwizycją danych poprzez uchwyty do agentów zajmuje się \emph{Agent Server}. Aby nasze środowisko graficzne miało dostęp do tych danych należy zdefiniować zbiór agentów dla naszego stanowiska. W zadaniu wykorzystujemy podstawowe rodzaje agentów służące do pozyskiwania danych. 
+
+\begin{figure}[H]
+    \label{MAPS::PanelOperatorski}
+  
+    \includegraphics[scale=0.45]{panel_operatorski.png}
+    \caption{Panel operatorski stanowiska w systemie MAPS}
+\end{figure}
+
+Przy dodawaniu nowych agentów należało zwrócić uwagę na funkcjonalność jaką będziemy chcieli uzyskać. Dane, które będziemy chcieli tylko i wyłącznie wyświetlać nie powinny być oznaczone jako edytowalne z poziomu interfejsu graficznego (pole  \emph{Output enabled}). Zapewnia to większe zabezpieczenie na błędy w trakcie projektowania środowiska graficznego, ponieważ dane wyświetlane mogą być krytyczne z punktu widzenia stanowiska, a ich zewnętrzna zmiana może spowodować awarie. Dane, na które operator będzie mógł wpływać z poziomu środowiska graficznego analogicznie muszą być oznaczone jako edytowalne. Ogólnie przy definiowaniu agentów należy podwójnie sprawdzać poprawność wpisywanych adresów, szczególnie w przypadku struktur, do których trzeba wyznaczać offset od adresu początkowego struktury przy okrelnianiu agenta dla jej pola.
+
+Otrzymany panel operatorski realizuje określoną w zadaniu funkcjonalność, informuje operatora o stanie obiektu oraz pozwala na wpływ na sposób i parametry sterowania obiektem.
+
+\section{Kalibracja}
+\label{MAPS::Kalibracja}
+
+Praca z obiektem rozpoczyna się od skalibrowania jego enkoderów absolutnych na podstawie krańcówek umieszczonych na osiach obiektu. Inicjalizacja tego procesu rozpoczyna się od naciśnięcia znajdującego się w lewej górnej części przycisku \emph{Homing}. Po restarcie urządzenia nie jest możliwy żaden tryb pracy bez pomyślnego przejścia przez proces kalibracji, dlatego przycisk umieszczony jest intuicyjnie w lewej górnej części interfejsu w celu określenia odpowiedniej kolejności postępowania w trakcie obsługi obiektu.
+
 \section{Sterowanie auto/ręka}
 \label{MAPS::AutoReka}
+
+Sterowanie w trybie automatycznym pozwala na ustawianie wartości docelowych stanu obiektu (stopnia obrotu wieży i wysunięcia wózka). Zmiana tych wartości następuje poprzez ustawienie ich pokrętłem w środowisku graficznym operatora.
+Pokrętło \emph{STPT\_Z} odpowiada za wartość zadaną stopnia obrotu wieży w procentach. Pokrętło \emph{STPT\_X} odpowiada natomiast za wartość zadaną stopnia wysunięcia wózka w procentach.
+
+\begin{figure}[H]
+    \label{MAPS::PanelOperatorski}
+    \centering
+    \includegraphics[scale=0.8]{auto.png}
+    \caption{Fragment panelu operatorskiego odpowiedzialny za sterowanie w trybie automatycznym}
+\end{figure}
+
+Sterowanie w trybie ręcznym jest domyślnie nieaktywne. Aby je aktywować należy wcisnąć przycisk \emph{MANUAL} umieszczony po lewej stronie pokręteł odpowiedzialnych za sterowanie ręczne. Po aktywacji trybu ręcznego mamy możliwość zmiany prędkości obrotu wieży oraz wysunięcia wózka. Pokrętło \emph{MV\_X} odpowiada za zadawanie prędkości wózka, wartości poniżej 50 powodują cofanie się wózka, natomiast wartości powyżej 50 powodu ruch w przód. Pokrętło \emph{MV\_Z} odpowiada za nadawanie prędkości obrototowej wieży, analogicznie wartość poniżej 50 powoduje ruch w lewo, a wartość powyżej 50 powoduje ruch w prawo.
+
+Deaktywacja trybu ręcznego zachodzi poprzez ponowne wciśnięcie przycisku \emph{MANUAL}, po czym następuje przekazanie sterowania do regulatorów w trybie automatycznym.
+
+\begin{figure}[H]
+    \label{MAPS::PanelOperatorski}
+    \centering
+    \includegraphics[scale=0.8]{reka.png}
+    \caption{Fragment panelu operatorskiego odpowiedzialny za sterowanie w trybie ręcznym}
+\end{figure}
 
 \section{Nastawy regulatorów}
 \label{MAPS::Nastawy}
 
+Operator w ramach obsługi panelu operatorskiego ma również możliwość zmiany nastaw regulatorów PID odpowiedzialnych za nadążanie za wartościami zadanymi położenia w osiach. Na poniższej ilustracji przedstawiony jest fragment panelu operatorskiego, w którym widoczne są pola tekstowe pozwalające na edycje tych parametrów. Kolumna po lewej stronie pozwala na zmianę parametrów regulatora PID odpowiedzialnego za położenie wózka, natomaist kolumna po prawej stronie pozwala na zmianę parametrów regulatora PID odpowiedzialnego za obrót wieży.
+
+\begin{figure}[H]
+    \label{MAPS::PanelOperatorski}
+    \centering
+    \includegraphics[scale=0.8]{nastawy.png}
+    \caption{Fragment panelu operatorskiego odpowiedzialny za zmianę wartości nastaw regulatorów w trybie automatycznym }
+\end{figure}
+
+
 \section{Wykresy}
 \label{MAPS::Wykresy}
+
+Znajdujący się na panelu operatora wykres kolumnowy wizualizuje aktualny stan obiektu względem wartości zadanych dla regulatora w celu zapewnienia łatwego sposobu na weryfikacje poprawności stanu obiektu przez operatora nawet z pewnej odległości w sytuacjach opuszczenia stanowiska. 
 
 \end{document}
