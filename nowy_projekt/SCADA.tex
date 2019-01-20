@@ -347,7 +347,7 @@ MOVB(TRUE, X14, switch2\_Y);
 
 MOVB(TRUE, X12, switch1\_Z);
 
-
+\vspace{1cm}
 
 Dalsze przykładowe wykorzystanie labeli do sterowania:
 
@@ -390,23 +390,21 @@ Zastosowaliśmy wbudowaną strukturę regulatora PID. Do jej wykorzystania potrz
 
 W programie inicjującym znajduje się inicjalizacja parametrów regulatorów PID 
 
+\vspace{1cm}
+
 //Parametry regulatora wbudowanego PID osi X
 
 PID\_X.params[0] := K100; //okres regulacji w milisekundach
 
 PID\_X.params[3] := K3; //wzmocnienie regulatora P
 
-PID\_X.params[4] := K5; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
-
-//mowiac calkowanie wylaczone
+PID\_X.params[4] := K5; //TI = 0 oznacza nieskonczony czas calkowania - inaczej mowiac calkowanie wylaczone
 
 PID\_X.params[5] := K0; //KD = 0 oznacza zerowe wzmocnienie rozniczkowania
 
 PID\_X.params[6] := K0; //TD = 0 oznacza wylaczone rozniczkowanie 
 
-PID\_X.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega
-
-//rowniez efektowi wind-up
+PID\_X.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega rowniez efektowi wind-up
 
 PID\_X.params[23] := K1; //dolny limit wartosci wyjsciowej z regulatora - -||-
 
@@ -414,6 +412,7 @@ SET(TRUE, PID\_X.params[1].5); //aktywacja limitow na wyjsciu regulatora
 
 SET(TRUE, PID\_X.params[1].0); //trzeba odwrocic kierunek dzialania PID 
 
+\vspace{1cm}
 
 //Parametry regulatora wbudowanego PID osi Z
 
@@ -421,17 +420,13 @@ PID\_Z.params[0] := K100; //okres regulacji w milisekundach
 
 PID\_Z.params[3] := K1; //wzmocnienie regulatora P
 
-PID\_Z.params[4] := K2; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
-
-//mowiac calkowanie wylaczone
+PID\_Z.params[4] := K2; //TI = 0 oznacza nieskonczony czas calkowania - inaczej mowiac calkowanie wylaczone
 
 PID\_Z.params[5] := K0; //KD = 0 oznacza zerowe wzmocnienie rozniczkowania
 
 PID\_Z.params[6] := K0; //TD = 0 oznacza wylaczone rozniczkowanie 
 
-PID\_Z.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega
-
-//rowniez efektowi wind-up
+PID\_Z.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega rowniez efektowi wind-up
 
 PID\_Z.params[23] := K0; //dolny limit wartosci wyjsciowej z regulatora - -||-
 
@@ -442,7 +437,11 @@ SET(TRUE, PID\_Z.params[1].0); //trzeba odwrocic kierunek dzialania PID
 
 Regulatory PID pracują w głównym programie. Kolejne wartości sterowania MV wyznaczane są poprzez wywołania funkcji PID(). Jeśli wyznaczone MV jest większe od 50 wykonywany jest ruch w przód z zadanym wypełnieniem PWM, a w przeciwnym wypadku wykonywany jest ruch w tył z zadanym wypełnieniem PWM.
 
+\vspace{1cm}
+
 Sekcja regulatora PID osi X:
+
+\vspace{0.3cm}
 
 \quad MOVB(TRUE, TRUE, PID\_X.Control\_ON);
 
@@ -482,7 +481,11 @@ Sekcja regulatora PID osi X:
 
 \quad END\_IF;
 
+\vspace{1cm}
+
 Sekcja regulatora PID osi Z:
+
+\vspace{0.3cm}
 
 \quad MOVB(TRUE, TRUE, PID\_Z.Control\_ON);
 
@@ -529,7 +532,12 @@ Sekcja regulatora PID osi Z:
 \label{PLC::Reka}
 
 Sterowanie ręczne możliwe jest po zresetowaniu flagi AUTO\_CONTROL(flaga domyślnie ustawiona). Jeśli flaga jest zresetowana program przechodzi do sekcji kodu w której odbywa się bezpośrednie wysterowanie wyjść PWM wartościami zmiennych R\_MV\_Z dla osi Z i R\_MV\_X dla osi X
-sekcja kodu sterowania ręcznego osią Z:
+
+\vspace{1cm}
+
+Sekcja kodu sterowania ręcznego osią Z:
+
+\vspace{0.3cm}
 
 \quad IF enc\_Z > K2350 OR enc\_Z < -K50 THEN
 
@@ -577,7 +585,11 @@ sekcja kodu sterowania ręcznego osią Z:
 
 \quad END\_IF;
 
-sekcja kodu sterowania ręcznego osią X:
+\vspace{1cm}
+
+Sekcja kodu sterowania ręcznego osią X:
+
+\vspace{0.3cm}
 
 \quad IF enc\_X > K9450 OR enc\_X < -K50 THEN
 
@@ -655,10 +667,11 @@ sekcja kodu zabezpieczająca ruchy krańcowe osi X:
 \quad END\_IF;
 
 
+\vspace{1cm}
 
-sekcja kodu zabezpieczająca ruchy krańcowe osi Z:
+Sekcja kodu zabezpieczająca ruchy krańcowe osi Z:
 
-
+\vspace{0.3cm}
 
 \quad IF homed\_Z = TRUE THEN
 
