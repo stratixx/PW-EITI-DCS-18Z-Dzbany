@@ -1,0 +1,49 @@
+HIOEN(TRUE, K0, K17, K0);
+
+Y3:=FALSE;
+Y5:=FALSE; // HAMULEC Z
+Y7:=FALSE; // HAMULEC X
+
+start_homing:=FALSE;
+homed_X:=FALSE;
+homed_Z:=FALSE;
+
+stpt_X:= 50;
+stpt_Z:= 50;
+
+R_MV_X:=K1;
+R_MV_Z:=K1;
+
+PWM(FALSE, K1, K100, Y0);
+PWM(FALSE, K1, K100, Y1);
+PWM(FALSE, K1, K100, Y2);
+
+autoControl:=TRUE;
+
+//Parametry regulatora wbudowanego PID osi X
+PID_X.params[0] := K100; //okres regulacji w milisekundach
+PID_X.params[3] := K3; //wzmocnienie regulatora P
+PID_X.params[4] := K5; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
+//mowiac calkowanie wylaczone
+PID_X.params[5] := K0; //KD = 0 oznacza zerowe wzmocnienie rozniczkowania
+PID_X.params[6] := K0; //TD = 0 oznacza wylaczone rozniczkowanie 
+PID_X.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega
+//rowniez efektowi wind-up
+PID_X.params[23] := K1; //dolny limit wartosci wyjsciowej z regulatora - -||-
+SET(TRUE, PID_X.params[1].5); //aktywacja limitow na wyjsciu regulatora
+SET(TRUE, PID_X.params[1].0); //trzeba odwrocic kierunek dzialania PID 
+
+
+//Parametry regulatora wbudowanego PID osi Z
+PID_Z.params[0] := K100; //okres regulacji w milisekundach
+PID_Z.params[3] := K1; //wzmocnienie regulatora P
+PID_Z.params[4] := K2; //TI = 0 oznacza nieskonczony czas calkowania - inaczej
+//mowiac calkowanie wylaczone
+PID_Z.params[5] := K0; //KD = 0 oznacza zerowe wzmocnienie rozniczkowania
+PID_Z.params[6] := K0; //TD = 0 oznacza wylaczone rozniczkowanie 
+PID_Z.params[22] := K100; //gorny limit wartosci wyjsciowej z regulatora - zapobiega
+//rowniez efektowi wind-up
+PID_Z.params[23] := K0; //dolny limit wartosci wyjsciowej z regulatora - -||-
+SET(TRUE, PID_Z.params[1].5); //aktywacja limitow na wyjsciu regulatora
+SET(TRUE, PID_Z.params[1].0); //trzeba odwrocic kierunek dzialania PID 
+
